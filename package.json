@@ -1,0 +1,22 @@
+{
+  "name": "multiuser-meeting-scheduler",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "files": [
+    "index.js"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lim-it-ing/MultiUser-Meeting-Scheduler.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/lim-it-ing/MultiUser-Meeting-Scheduler/issues"
+  },
+  "homepage": "https://github.com/lim-it-ing/MultiUser-Meeting-Scheduler#readme"
+}
