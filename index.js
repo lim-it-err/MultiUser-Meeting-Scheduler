@@ -1,7 +1,8 @@
 const express    = require('express');
 const path = require("path");
+const bodyParser = require('body-parser');
 const morgan = require("morgan");
-const {sequelize} = require('./models/index');
+const models = require('./models');
 
 const app = express();
 
@@ -11,12 +12,15 @@ const app = express();
 app.set('view engine', 'ejs');
 app.engine('html',require('ejs').renderFile);
 
-//logging setting
+
+//middlewares
 if(process.env.NODE_ENV === "production") {
   app.use(morgan('combined'));
 } else {
   app.use(morgan('dev'));
 }
+app.use(bodyParser.json());
+
 //port setting | default 3000
 app.set('port', process.env.PORT || 3000);
 
@@ -43,7 +47,7 @@ app.use((err, req, res, next) => {
   }
 });
 
-sequelize.sync({force:false}) //true로 설정시 모두 사라짐
+models.sequelize.sync({force:false}) //true로 설정시 db모두 삭제후 재생성
   .then(() => {
     app.listen(app.get('port'), () => {
       console.log('Express server listening on port ' + app.get('port'));
