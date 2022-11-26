@@ -1,9 +1,7 @@
 const express    = require('express');
 const path = require("path");
 const morgan = require("morgan");
-const mysql      = require('mysql');
-const dbconfig   = require('./config/database.js');
-const connection = mysql.createConnection(dbconfig);
+const {sequelize} = require('./models/index');
 
 const app = express();
 
@@ -45,16 +43,12 @@ app.use((err, req, res, next) => {
   }
 });
 
-/*
-app.get('/user', (req, res) => {
-    connection.query('SELECT * from user', (error, rows) => {
-        if (error) throw error;
-        console.log('User info is: ', rows);
-        res.send(rows);
+sequelize.sync({force:false}) //true로 설정시 모두 사라짐
+  .then(() => {
+    app.listen(app.get('port'), () => {
+      console.log('Express server listening on port ' + app.get('port'));
     });
-});
-*/
-
-app.listen(app.get('port'), () => {
-    console.log('Express server listening on port ' + app.get('port'));
-});
+  })
+  .catch(err => {
+    console.log("DB connection failed: " + err);
+  })
