@@ -4,21 +4,29 @@ module.exports = (sequelize, DataTypes) => {
   class Schedule extends Model {
     static associate(models) {
       this.belongsTo(models.User,{
-        as:"user",
         foreignKey: "uid",
         onDelete: "cascade",
+      });
+      this.hasMany(models.UserTime,{
+        foreignKey:"schedule_id",
+        onDelete:"cascade",
       });
     }
   }
   Schedule.init(
   {
+    schedule_id: {
+      autoIncrement: true,
+      primaryKey: true,
+      type: DataTypes.INTEGER,
+      allowNull : false,
+    },
     name: {
-      field: "users_id",
-      type:DataTypes.INTEGER,
+      type:DataTypes.STRING,
       allowNull: false,
     },
     sched_day: {
-      type:DataTypes.DATE,
+      type:DataTypes.DATEONLY,
       allowNull: false,
     }
   }, {

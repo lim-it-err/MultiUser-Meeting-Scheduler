@@ -1,32 +1,33 @@
 'use strict';
 const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class User extends Model {
+  class UserTime extends Model {
     static associate(models) {
-      this.hasMany(models.Schedule,{
-        foreignKey:"uid",
-        onDelete:"cascade",
+      this.belongsTo(models.Schedule,{
+        foreignKey: "schedule_id",
+        onDelete: "cascade",
       });
-      this.hasMany(models.UserTime,{
-        foreignKey:"uid",
-        onDelete:"cascade",
+      this.belongsTo(models.User,{
+        foreignKey: "uid",
+        onDelete: "cascade",
       });
     }
   }
-  User.init(
+  UserTime.init(
   {
-    uid: {
+    time_id: {
       allowNull: false,
+      autoIncrement: true,
       primaryKey: true,
-      type: DataTypes.STRING
+      type: DataTypes.INTEGER
     },
-    password: {
+    start_time: {
       allowNull: false,
-      type: DataTypes.STRING
+      type: DataTypes.DATE,
     },
-    name: {
+    end_time: {
       allowNull: false,
-      type: DataTypes.STRING
+      type: DataTypes.DATE,
     },
     createdAt: {
       allowNull: false,
@@ -41,7 +42,7 @@ module.exports = (sequelize, DataTypes) => {
     timestamps:true,
     charset: "utf8",
     collate : 'utf8_general_ci',
-    modelName: 'User',
+    modelName: 'UserTime',
   });
-  return User;
+  return UserTime;
 };
