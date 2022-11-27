@@ -15,16 +15,18 @@ module.exports = (sequelize, DataTypes) => {
   }
   User.init(
   {
+    //  https://stackoverflow.com/questions/33775165/auto-increment-id-with-sequelize-in-mysql
     uid: {
-      allowNull: false,
-      primaryKey: true,
-      type: DataTypes.STRING
+        allowNull: false,
+        primaryKey: true,
+        autoIncrement: true,
+        type: DataTypes.INTEGER
     },
     password: {
       allowNull: false,
       type: DataTypes.STRING
     },
-    name: {
+    username: {
       allowNull: false,
       type: DataTypes.STRING
     },
