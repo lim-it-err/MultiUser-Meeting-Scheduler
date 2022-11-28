@@ -4,11 +4,11 @@ const models = require('../models');
 const bcrypt = require("bcryptjs");
 require('dotenv').config();
 const jwt = require('jsonwebtoken');
+const {request} = require("express");
 
 router.get('/', (req, res) => {
   res.redirect('/login');
 });
-
 
 //------------login--------------
 router.get('/login', (req, res) => {
@@ -79,6 +79,56 @@ router.post('/user/signup', async (req, res) => {
     }
 });
 
+
+//---------------------------
+router.post('/schedule', async(req, res)=> {
+    //TODO : Check Authentication
+    let requestUid = req.body.uid;
+    const scheduleName = req.body.name;
+    //TODO : make groupDate Optional
+    const scheduleDate = req.body.date || new Date().toISOString().substring(0, 10);    //Format : yyyy-mm-dd
+    
+    //TODO : Check schedule's conflict.
+    
+    const schedule = await models.Schedule.create({
+        name : scheduleName,
+        sched_day : new Date(scheduleDate),
+        uid : requestUid
+    });
+    return res.status(201).send(
+        {schedule_id : schedule.schedule_id});
+}); 
+
+//
+router.get('/schedule/detail/:schedule_id', async(req, res)=>{
+    var params = req.params;
+    const schedule = await models.Schedule.findOne({where: {schedule_id: params.schedule_id }});
+    if (!schedule)  return res.status(404).send({description:"no schedules are found."});
+    
+    return res.status(201).json(schedule.toJSON());
+    
+
+});
+
+// Get Users in scheduleGroup
+// FIXME : CHANGE THIS TO QUERY....
+router.post('/schedule/user', async(req, res)=> {   
+    let requestScheduleId = req.body.scheduleid;
+    let requestUid = req.body.uid;
+    const existingSchedule = await models.Schedule.findByPk(requestScheduleId);
+    if(!existingSchedule)   return res.status(404).send({description:"no schedules are found"})
+    const newSchedule = await models.Schedule.create({
+        name: existingSchedule.name,
+        sched_day : existingSchedule.sched_day,
+        uid : requestUid
+    })
+    return res.status(201).send(
+        {schedule_id : newSchedule.schedule_id});
+    });
+    
+    
+
+//------------example-------------
 
 router.get('/testcreate', async(req, res) => {
     const user = await models.User.create({
