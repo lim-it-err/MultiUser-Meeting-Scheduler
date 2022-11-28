@@ -1,1 +1,113 @@
-this is schedule page
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    crossorigin="anonymous">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css"  rel="stylesheet" >
+  <link href="/fullcalendar/main.css" rel="stylesheet">
+  <link href="/css/button.css" rel="stylesheet">
+  <style>
+    
+    #user-card{
+      background-color:#EDFFE1;
+    }
+    #userid{
+      font-size:0.8em;
+    }
+    .sidebar{
+      background-color: #EDFFE1;
+    }
+    
+    
+  </style>
+  <script src="/fullcalendar/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded',()=>{
+      const calendarEl1 = document.getElementById('calendar1');
+      const calendarEl2 = document.getElementById('calendar2');
+      const calendar1 = new FullCalendar.Calendar(calendarEl1, {
+        initialView: 'timeGridDay',
+        allDaySlot: false,
+        headerToolbar : {left:'',center:'title',right:''},
+        //contentHeight : "600",
+        height : "auto",
+        locale : 'kr',
+        stickyFooterScrollbar:true,
+      });
+      const calendar2 = new FullCalendar.Calendar(calendarEl2, {
+        initialView: 'timeGridDay',
+        allDaySlot: false,
+        headerToolbar : {left:'',center:'title',right:''},
+        //contentHeight : "600",
+        height : "auto",
+        locale : 'kr',
+        stickyFooterScrollbar:true,
+      });
+      calendar1.render();
+      calendar2.render();
+    })
+  </script>
+  
+</head>
+<body>
+  <div class="d-flex flex-nowrap">
+    
+    <div class="d-flex flex-column flex-shrink-0 p-3 sidebar">
+      
+      <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
+        <i class="bi bi-bootstrap-fill me-2" style="font-size: 2rem;"></i> 
+        <span style="font-size:1.8rem;">
+          Sidebar
+        </span>
+      </a>
+      <hr>
+      <ul class="nav nav-pills flex-column mb-auto">
+        <a href="#" class="nav-link link-dark">
+          <i class="bi bi-usb-mini"></i>
+          Dashboard
+        </a>
+      </ul>
+      <hr>
+    </div>
+
+    <div class="container-fluid">
+      <div class="position-absolute top-0 end-0">
+        <div id = "user-card" class="card m-3">
+          <div class="row align-items-center m-2">
+            <i class="bi bi-person-fill col-2"></i>
+            <div class="col ">
+              <span id="username">User1</span>
+              <span id="userid">userid : test</span>
+            </div>
+            <a href="/logout" class="nav-link col">로그아웃</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="d-flex flex-column my-5 ms-4">
+        <h1>일정</h1>
+        <hr class="w-25 m-0">
+        <h6 class="pt-1">날짜</h6>
+      </div>
+      
+
+      <div class="d-flex m-3">
+        <div class="d-inline-flex flex-column p-4 me-4 border">
+          <button type="button" class="btn btn-primary mb-3">User1</button>
+          <button type="button" class="btn btn-secondary mb-3">User2</button>
+          <button type="button" class="btn btn-secondary mb-3">User3</button>
+        </div>
+        <div class="container-sm">
+          <div id ="calendar1"></div>
+        </div>
+        <div class="container-sm">
+          <div id ="calendar2"></div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+  
+  
+</body>

@@ -29,7 +29,7 @@ app.use('/',require('./routes'));
 app.use('/user',require('./routes/user'));
 
 //static file serving
-app.use(express.static(path.join(__dirname,"public")));
+app.use('/',express.static(path.join(__dirname,"public")));
 
 //error handling
 app.use(function(req, res, next) {
