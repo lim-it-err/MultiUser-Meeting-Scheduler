@@ -59,14 +59,21 @@
 
   </div>
 
-  <button type="button" class="btn btn-lg"
-    style="position: absolute; width: 140px;height: 50px;left: 1212px;top: 450px;background: #96D780">일정참여</button>
-  <button type="button" class="btn btn-lg"
-    style="position: absolute; width: 140px;height: 50px;left: 1212px;top: 520px;background: #96D780">일정생성</button>
-  <button type="button" class="btn btn-lg"
-    style="position: absolute; width: 96px;height: 96px;left: 1260px;top: 590px;background: linear-gradient(0deg, rgba(66, 105, 0, 0.11), rgba(66, 105, 0, 0.11)), #F8FFE9;">
-    <h1><i class="bi bi-pen"></i></h1>
-  </button>
+
+  <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+    <button type="button" class="btn btn-primary">1</button>
+    <button type="button" class="btn btn-primary">2</button>
+
+    <div class="btn-group" role="group">
+      <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+        Dropdown
+      </button>
+      <ul class="dropdown-menu">
+        <li><a class="dropdown-item" href="#">Dropdown link</a></li>
+        <li><a class="dropdown-item" href="#">Dropdown link</a></li>
+      </ul>
+    </div>
+  </div>
   <script>
     /* JS Code */
   </script>
