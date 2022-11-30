@@ -9,6 +9,8 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
     crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css">
+  <script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
   <title>main
   </title>
@@ -51,12 +53,33 @@
   <div class="container flex-column d-flex align-items-center" style=" display: flex;flex-direction: column;align-items: flex-start;padding: 0px;position: absolute;
   width: 652px;height: 500px;left: 324px;top: 84px;background: #F7FFEE;">
 
+  <ol id = "scheduleList"></ol>
 
 
 
+    <script>
+      var scheduleList_HTML = document.getElementById("scheduleList");
+      $(document).ready(function(){
+        axios({
+          method: "get",
+          url:"/schedule/testuid",
+        }).then(function(req)
+        {
+          var scheduleRequest = req.data['scheduleList']; // List of Json
+          for (var i = 0 ; i < scheduleRequest.length ; i++)
+          {
+            var singleSchedule = scheduleRequest[i];
+            var entry = document.createElement('li');
+            entry.appendChild(document.createTextNode(singleSchedule["name"]));
+            scheduleList_HTML.appendChild(entry);
+          }
+        }).catch(function(req)
+        {
+          console.log("error", req);
+        });
 
-
-    //list 넣기
+      });
+</script>
 
 
   </div>
@@ -82,6 +105,7 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.min.js"
     integrity="sha384-IDwe1+LCz02ROU9k972gdyvl+AESN10+x7tBKgc9I5HFtuNz0wWnPclzo6p9vxnk"
     crossorigin="anonymous"></script>
+
 </body>
 
 </html>
