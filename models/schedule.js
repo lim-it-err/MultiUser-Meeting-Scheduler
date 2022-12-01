@@ -3,9 +3,9 @@ const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class Schedule extends Model {
     static associate(models) {
-      this.belongsTo(models.User,{
+      this.belongsToMany(models.User,{
         foreignKey: "uid",
-        onDelete: "cascade",
+        through: "UserSchedule",
       });
       this.hasMany(models.UserTime,{
         foreignKey:"schedule_id",

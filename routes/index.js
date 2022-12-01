@@ -94,7 +94,6 @@ router.get('/testcreate', async (req, res) => {
   const schedule = await models.Schedule.create({
     name: "테스트일정",
     sched_day: new Date(),
-    uid: user.uid,
   });
   const usertime = await models.UserTime.create({
     start_time: new Date(),
@@ -102,6 +101,7 @@ router.get('/testcreate', async (req, res) => {
     schedule_id: schedule.schedule_id,
     uid: user.id
   });
+  user.addSchedule(schedule);
   res.sendStatus(200);
 })
 
