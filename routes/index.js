@@ -88,7 +88,7 @@ router.post('/signup', async (req, res) => {
 router.get('/testcreate', async (req, res) => {
   const user = await models.User.create({
     uid: "test",
-    password: 1234,
+    password: bcrypt.hashSync("1234", 8),
     name: "테스트유저"
   });
   const schedule = await models.Schedule.create({
@@ -97,11 +97,12 @@ router.get('/testcreate', async (req, res) => {
   });
   const usertime = await models.UserTime.create({
     start_time: new Date(),
-    end_time: new Date("2022-11-27T02:00:00"),
+    end_time: new Date().setHours(2),
     schedule_id: schedule.schedule_id,
-    uid: user.id
+    uid: user.uid
   });
-  user.addSchedule(schedule);
+  //user.addSchedule(schedule);
+  schedule.addUser(user);
   res.sendStatus(200);
 })
 
