@@ -11,4 +11,20 @@ function createToken(payload, time) {
   return jwt.sign(payload, process.env.JWT_SECRET, config);
 }
 
-module.exports = createToken;
+function verify(token) { // access token 검증
+  let decoded = null;
+  try {
+    decoded = jwt.verify(token, process.env.JWT_SECRET);
+    return {
+      ok: true,
+      uid: decoded.uid,
+    };
+  } catch (err) {
+    return {
+      ok: false,
+      message: err.message,
+    };
+  }
+}
+
+module.exports = {createToken, verify};

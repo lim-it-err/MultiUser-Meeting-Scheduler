@@ -3,6 +3,7 @@ const path = require("path");
 const bodyParser = require('body-parser');
 const morgan = require("morgan");
 const models = require('./models');
+const cookieParser = require("cookie-parser");
 
 const app = express();
 
@@ -19,7 +20,13 @@ if(process.env.NODE_ENV === "production") {
 } else {
   app.use(morgan('dev'));
 }
+
+app.use(cookieParser());
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
+
 
 //port setting | default 3000
 app.set('port', process.env.PORT || 3000);
@@ -32,11 +39,12 @@ app.use('/user',require('./routes/user'));
 app.use('/',express.static(path.join(__dirname,"public")));
 
 //error handling
-app.use(function(req, res, next) {
+app.use((req, res, next) => {
   var err = new Error('Not Found');
   err.status = 404;
   next(err);
 });
+
 
 app.use((err, req, res, next) => {
   res.status(err.status || 500);

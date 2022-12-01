@@ -1,14 +1,15 @@
 const express = require('express');
 const router = express.Router();
 const models = require('../../models');
+const auth = require('../auth');
 
 router.get('/', (req, res, next) => {
   res.redirect('/user/main');
 });
 
-router.get('/main', (req,res,next)=>{
-  let a = [1,2,3]; //이런식으로 페이지에 변수전달가능
-  res.render("user/main.html",a);
+router.get('/main', auth, (req,res,next)=>{
+  //let a = req.cookies.token;
+  res.render("user/main.html");
 });
 
 router.get('/schedule', (req,res,next)=>{

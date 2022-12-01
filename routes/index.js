@@ -4,7 +4,7 @@ const models = require('../models');
 const bcrypt = require("bcryptjs");
 require('dotenv').config();
 const jwt = require('jsonwebtoken');
-const {request} = require("express");
+const auth = require('./auth');
 
 router.get('/', (req, res) => {
   res.redirect('/login');
@@ -14,6 +14,7 @@ router.get('/', (req, res) => {
 router.get('/login', (req, res) => {
   res.render("login.html");
 });
+
 router.post('/login', async (req, res) => {
   const responseUid = req.body.uid;
   const user = await models.User.findOne({where: {uid: responseUid}});
@@ -43,6 +44,11 @@ router.post('/login', async (req, res) => {
   }
 })
 
+router.get('/logout', auth, async(req,res) =>{
+  res.clearCookie("token");
+  res.redirect("/login");
+})
+
 //-------------user---------------
 router.post('/signup', async (req, res) => {
   const responseUid = req.body.uid;
@@ -54,9 +60,7 @@ router.post('/signup', async (req, res) => {
     const user = await models.User.create({
       uid: responseUid,
       password: bcrypt.hashSync(req.body.password, 8),
-      name: req.body.name,
-      createdAt: createdAt,
-      updatedAt: createdAt
+      name: req.body.name
     });
     const TOKEN_KEY = process.env.JWT_SECRET || "";
 
