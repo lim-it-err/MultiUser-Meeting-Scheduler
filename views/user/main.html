@@ -14,9 +14,50 @@
 
   <title>main
   </title>
+
   <style>
-    /* CSS Code */
+    body {font-family: Arial, Helvetica, sans-serif;}
+
+    /* The Modal (background) */
+    .modal {
+      display: none; /* Hidden by default */
+      position: fixed; /* Stay in place */
+      z-index: 1; /* Sit on top */
+      padding-top: 100px; /* Location of the box */
+      left: 0;
+      top: 0;
+      width: 100%; /* Full width */
+      height: 100%; /* Full height */
+      overflow: auto; /* Enable scroll if needed */
+      background-color: rgb(0,0,0); /* Fallback color */
+      background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    }
+
+    /* Modal Content */
+    .modal-content {
+      background-color: #fefefe;
+      margin: auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+    }
+
+    /* The Close Button */
+    .close {
+      color: #aaaaaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+      color: #000;
+      text-decoration: none;
+      cursor: pointer;
+    }
   </style>
+  
 </head>
 
 <body>
@@ -37,7 +78,7 @@
             <div class="ms-2 me-4">
               <span id="username">User1</span>
               <br>
-              <span id="userid">userid : test</span>
+              <span id="userid">안녕하세요</span>
             </div>
           </div>
         </div>
@@ -46,20 +87,50 @@
 
 
     <div class="mt-auto p-2"> 
-      <button type="button" class="btn btn-light" style="width: 182px; height: 40px;">로그아웃</button>
+      <button type="button" id="logout-button" class="btn btn-light" style="width: 182px; height: 40px;">로그아웃</button>
     </div>
 
   </div>
   <div id="scheduleList" class="container flex-column d-flex align-items-center" style=" display: flex;flex-direction: column;align-items: flex-start;padding: 0px;position: absolute;
   width: 652px;height: 500px;left: 324px;top: 84px;background: #F7FFEE;">
 
-
+<!--    script for init (cookie, get schedule)-->
     <script>
       var scheduleList_HTML = document.getElementById("scheduleList");
+      var logout_button = document.getElementById("logout-button");
+      logout_button.addEventListener("click", function(){
+        axios({
+          method : "get",
+          url:"/logout"
+        }).then(function (req){
+          //TODO : Check whether cookie has successfully deleted
+          console.log("successfully logout");
+          location.href='/login';
+        }).catch(function (req){
+          console.log("Error on logout")
+        });
+      })
+      
       $(document).ready(function(){
+        
+        let cookie = document.cookie.split(';').reduce((cookieObject, cookieString) => {
+          let splitCookie = cookieString.split('=')
+          try {
+            cookieObject[splitCookie[0].trim()] = decodeURIComponent(splitCookie[1])
+          } catch (error) {
+            cookieObject[splitCookie[0].trim()] = splitCookie[1]
+          }
+          return cookieObject
+        }, [])
+        const userToken = cookie["token"]
+        const uid = cookie["uid"]
+        
+        var username_span = document.getElementById("username");
+        username_span.textContent = uid;
+        username_span.className = "font-weight-bold"
         axios({
           method: "get",
-          url:"/schedule/testuid",
+          url:"/user/getschedule/"+uid,
         }).then(function(req)
         {
           var scheduleRequest = req.data['scheduleList']; // List of Json
@@ -67,10 +138,11 @@
           {
             var singleSchedule = scheduleRequest[i];
             var singleScheduleName = singleSchedule["name"];
+            var singleScheduleDate = singleSchedule["sched_day"];
             var btn = document.createElement("button");
-            btn.className = 'btn btn-secondary mb-3';
+            btn.className = 'btn btn-outline-dark float-start col-12 mt-1 mb-2';
             btn.id = singleSchedule["schedule_id"];
-            var t = document.createTextNode(singleScheduleName);
+            var t = document.createTextNode(singleScheduleName +"  ("+singleScheduleDate+")");
             btn.addEventListener("click", function()
             {
               var url= window.location.href;
@@ -87,11 +159,19 @@
 
       });
       </script>
-
-
+    
 
   </div>
-
+  <div id="myModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <div class="input-group">
+      <input type="text" class="form-control" aria-label="Sizing example input" placeholder="ID"
+             aria-describedby="inputGroup-sizing-lg">
+      <button type="button" id="finish-enter-button" class="btn btn-primary">입력 완료</button>
+    </div>
+    </div>
+  </div>
   <div class="btn-group" style="position: absolute; width: 96px;height: 96px;left: 1260px;top: 590px" role="group"
     aria-label="Button group with nested dropdown">
 
@@ -106,6 +186,8 @@
       </ul>
     </div>
   </div>
+  <!--    script for participating new group or make group -->
+
   <script>
     var add = document.getElementById("schedule-add");
     var create = document.getElementById("schedule-create");
@@ -116,10 +198,42 @@
       location.href = url;    
     })
     add.addEventListener("click", function(){
-      // add page
+      console.log("?");
     })
   </script>
 
+  <script>
+    // Get the modal
+    var modal = document.getElementById("myModal");
+
+    // Get the button that opens the modal
+    var btn = document.getElementById("schedule-add");
+
+    // Get the <span> element that closes the modal
+    var span = document.getElementsByClassName("close")[0];
+
+    var finEnterBtn = document.getElementById("finish-enter-button");
+    // When the user clicks the button, open the modal 
+    btn.onclick = function() {
+      modal.style.display = "block";
+    }
+
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function() {
+      modal.style.display = "none";
+    }
+    finEnterBtn.onclick = function(){
+      
+      modal.style.display="none";
+    }
+
+    // When the user clicks anywhere outside of the modal, close it
+    // window.onclick = function(event) {
+    //   if (event.target == modal) {
+    //     modal.style.display = "none";
+    //   }
+    // }
+  </script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
     integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3"
     crossorigin="anonymous"></script>

@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const models = require('../../models');
 const auth = require('../auth');
+const {verify} = require("../../util/token");
 
 
 //routes
@@ -41,6 +42,24 @@ router.post('/joinSchedule', auth, async (req, res) => {
     {schedule_id: newSchedule.schedule_id});
 });
 
+router.get('/detail', auth, async(req, res)=>{
+  const token = req.cookies.token;
+  const result = verify(token);
+  if(result.ok){
+    let uid = result.uid;
+    next();
+  } else { //토큰인증실패
+    res.status(401).send({
+      ok:false,
+      message:result.message
+    });
+    User.findOne({_id: userId}).then(function(user){
+      // Do something with the user
+      return res.status(201).send(user);
+    });
+  }
+  return res.send(500);
+});
 
 //현재 uid의 유저가 가진 모든 스케쥴 가져오기
 // https://www.notion.so/scheudle-userid-fc61ec47299c4e33a0697aee0f8f514b
