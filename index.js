@@ -34,6 +34,8 @@ app.set('port', process.env.PORT || 3000);
 //routing setting
 app.use('/',require('./routes'));
 app.use('/user',require('./routes/user'));
+app.use('/user/schedule',require('./routes/user/schedule'));
+app.use('/user/make_schedule',require('./routes/user/make_schedule'));
 
 //static file serving
 app.use('/',express.static(path.join(__dirname,"public")));
