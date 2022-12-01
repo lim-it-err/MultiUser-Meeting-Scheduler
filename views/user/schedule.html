@@ -21,17 +21,29 @@
     
     
   </style>
+  <script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
   <script src="/fullcalendar/main.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded',()=>{
-      const calendarEl1 = document.getElementById('calendar1');
-      const calendarEl2 = document.getElementById('calendar2');
+    let schedule = <%- JSON.stringify(schedule) %>;
+    //console.log(schedule.Users.length);
+    jQuery(document).ready(($)=>{
+      const calendarEl1 = $('#calendar1')[0];
+      const calendarEl2 = $('#calendar2')[0];
       const calendar1 = new FullCalendar.Calendar(calendarEl1, {
         initialView: 'timeGridDay',
         allDaySlot: false,
         headerToolbar : {left:'',center:'',right:'title'},
         height : 600,
         locale : 'kr',
+        initialDate : schedule.sched_day,
+        eventSources : [{
+          url:'../getUserTime',
+          extraParams:{
+            uid : schedule.Users[0].uid,
+            sched_id : schedule.schedule_id
+          },
+          failure: ()=>{console.log("Failed to fetch data")}
+        }],//`../getUserTime?uid=${schedule.User.uid}&sched_id=${schedule.schedule_id}`,
         stickyFooterScrollbar:true,
       });
       const calendar2 = new FullCalendar.Calendar(calendarEl2, {
@@ -75,9 +87,9 @@
           <div class="d-inline-flex align-items-center m-1 p-1">
             <i class="bi bi-person-fill mx-2"></i>
             <div class="ms-2 me-4">
-              <span id="username">User1</span>
+              <span id="username"> <%= schedule.Users[0].name %> </span>
               <br>
-              <span id="userid">userid : test</span>
+              <span id="userid">userid : <%= schedule.Users[0].uid %></span>
             </div>
             <a href="/logout" class="nav-link ">로그아웃</a>
           </div>
@@ -85,22 +97,22 @@
       </div>
 
       <div class="d-flex flex-column mt-5 ms-4">
-        <h1>일정</h1>
+        <h1> <%= schedule.name %> </h1>
         <hr class="w-25 m-0">
-        <h6 class="pt-1">날짜</h6>
+        <h6 class="pt-1">날짜 <%= schedule.sched_day %></h6>
       </div>
       
 
       <div class="d-flex m-3">
         <div>
-          <div class = "d-inline-flex flex-column p-4 mt-4 me-4 rounded shadow">
-            <button type="button" class="btn btn-primary mb-3">User1</button>
-            <button type="button" class="btn btn-secondary mb-3">User2</button>
-            <button type="button" class="btn btn-secondary mb-3">User3</button>
+          <div class = "d-inline-flex flex-column p-4 mt-4 me-4 rounded shadow" style="width: max-content">
+            <% for(let user of schedule.Users){ %>
+              <button type="button" class="btn btn-primary fw-semibold mb-3"> <%= user.name %> </button>
+            <% } %>
           </div>
         </div>
         <div class="container-sm mx-4 p-3">
-          <h4 class ="text-center mb-5">User1의 시간표</h4>
+          <h4 class ="text-center mb-5"><%= schedule.Users[0].name %>의 시간표</h4>
           <div id ="calendar1"></div>
         </div>
         <div class="vr"></div>
