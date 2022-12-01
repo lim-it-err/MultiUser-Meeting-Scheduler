@@ -24,37 +24,34 @@
 
   <div class="container flex-column d-flex align-items-center"
     style="position: absolute;width: 228px;  height: 712px;  left: 0px;  top: 0px;  background:#EDFFE1;">
-    <div class="p-2 bd-highlight">
-      <h1><i class="bi bi-person-lines-fill"></i></h1>
-    </div>
-
     <div>
-      //list 넣기
-
-
-
+      <div class="p-2 bd-highlight">
+        <h1><i class="bi bi-person-lines-fill"></i></h1>
+      </div>
     </div>
-
-
-
-
-
-
-
+    <div>
+      <div class="position-relative top-0 end-0 mt-2 me-2">
+        <div id = "user-card" class="card m-3">
+          <div class="d-inline-flex align-items-center m-1 p-1">
+            <i class="bi bi-person-fill mx-2"></i>
+            <div class="ms-2 me-4">
+              <span id="username">User1</span>
+              <br>
+              <span id="userid">userid : test</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
 
     <div class="mt-auto p-2"> 
-      <button type="button" class="btn btn-light" onclick="location.href='/logout'" style="width: 182px; height: 40px;">
-        로그아웃
-      </button>
+      <button type="button" class="btn btn-light" style="width: 182px; height: 40px;">로그아웃</button>
     </div>
 
   </div>
-  <div class="container flex-column d-flex align-items-center" style=" display: flex;flex-direction: column;align-items: flex-start;padding: 0px;position: absolute;
+  <div id="scheduleList" class="container flex-column d-flex align-items-center" style=" display: flex;flex-direction: column;align-items: flex-start;padding: 0px;position: absolute;
   width: 652px;height: 500px;left: 324px;top: 84px;background: #F7FFEE;">
-
-  <ol id = "scheduleList"></ol>
-
 
 
     <script>
@@ -69,9 +66,19 @@
           for (var i = 0 ; i < scheduleRequest.length ; i++)
           {
             var singleSchedule = scheduleRequest[i];
-            var entry = document.createElement('li');
-            entry.appendChild(document.createTextNode(singleSchedule["name"]));
-            scheduleList_HTML.appendChild(entry);
+            var singleScheduleName = singleSchedule["name"];
+            var btn = document.createElement("button");
+            btn.className = 'btn btn-secondary mb-3';
+            btn.id = singleSchedule["schedule_id"];
+            var t = document.createTextNode(singleScheduleName);
+            btn.addEventListener("click", function()
+            {
+              var url= window.location.href;
+              url = url.slice(0, url.lastIndexOf('/'))+"/schedule"+"?id="+this.id;
+              location.href = url;
+            })
+            btn.appendChild(t);
+            scheduleList_HTML.append(btn);
           }
         }).catch(function(req)
         {
@@ -79,7 +86,8 @@
         });
 
       });
-</script>
+      </script>
+
 
 
   </div>
@@ -89,15 +97,28 @@
 
     <div class="btn-group" role="group">
       <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-        "이미지"
+        일정 추가 / 생성
       </button>
       <ul class="dropdown-menu">
-        <li><a class="dropdown-item" href="#">일정 추가</a></li>
-        <li><a class="dropdown-item" href="#">알정 생성</a></li>
+        <li><a id= "schedule-add" class="dropdown-item" href="#">일정 추가</a></li>
+        <li><a id = "schedule-create" class="dropdown-item" href="#">알정 생성</a></li>
+        
       </ul>
     </div>
   </div>
-
+  <script>
+    var add = document.getElementById("schedule-add");
+    var create = document.getElementById("schedule-create");
+    
+    create.addEventListener("click", function(){
+      var url= window.location.href;
+      url = url.slice(0, url.lastIndexOf('/'))+"/make_schedule";
+      location.href = url;    
+    })
+    add.addEventListener("click", function(){
+      // add page
+    })
+  </script>
 
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
     integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3"
