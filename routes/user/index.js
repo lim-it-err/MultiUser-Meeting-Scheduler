@@ -65,19 +65,22 @@ router.get('/detail', auth, async(req, res)=>{
 // https://www.notion.so/scheudle-userid-fc61ec47299c4e33a0697aee0f8f514b
 router.get('/getSchedule/:uid', async (req, res) => {
   var requestUid = req.params.uid;
-  const scheduleList = await models.Schedule.findAll({
+  const user = await models.User.findOne({
     // attributes:['schedule_id', 'name', 'sched_day'],
     where:{
       uid:requestUid
-    }
+    },
+    include:models.Schedule
   });
+  console.log(user.Schedules);
+  const scheduleList = user.Schedules;
   return res.status(201).send({scheduleList})
 });
 
 
 //testing
 router.get('/usertimetest',async(req,res,next)=>{
-  const usertime = await models.UserTime.findAll({
+  const usertime = await models.Users.findAll({
     where: {
       uid: "test"
     },

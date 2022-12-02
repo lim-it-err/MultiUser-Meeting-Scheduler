@@ -22,40 +22,120 @@
     
   </style>
   <script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
   <script src="/fullcalendar/main.js"></script>
   <script>
     let schedule = <%- JSON.stringify(schedule) %>;
+    let current_uid = schedule.Users[0].uid;
     //console.log(schedule.Users.length);
-    jQuery(document).ready(($)=>{
-      const calendarEl1 = $('#calendar1')[0];
-      const calendarEl2 = $('#calendar2')[0];
-      const calendar1 = new FullCalendar.Calendar(calendarEl1, {
+    $(document).ready(($)=>{
+      const calUserEl = $('#calendar1')[0];
+      const calEveryEl = $('#calendar2')[0];
+      const calUser = new FullCalendar.Calendar(calUserEl, {
         initialView: 'timeGridDay',
         allDaySlot: false,
         headerToolbar : {left:'',center:'',right:'title'},
         height : 600,
         locale : 'kr',
+        eventClick : function(info){
+          //console.log("info",info.event.start);
+          if(confirm(`${moment(info.event.start).format("HH:mm")}부터 ${moment(info.event.end).format("HH:mm")}까지 일정을 삭제하시겠습니까?`)){
+            $.ajax({
+              type:"POST",
+              url : "../delUserTime",
+              data:{
+                start_time : info.event.start,
+                end_time : info.event.end,
+                sched_id : schedule.schedule_id
+              },
+              success: (res)=> {
+                alert("성공적으로 일정을 삭제하였습니다.")
+                this.refetchEvents();
+                calEveryone.refetchEvents();
+              },
+              failure: function(err){
+                alert(`삭제실패 error:${err}`);
+              }
+            })
+          }
+        },
+        selectable : true,
+        select : function(sel){
+          //console.log(sel.start,sel.end);
+          if(confirm(`${moment(sel.start).format("HH:mm")}부터 ${moment(sel.end).format("HH:mm")}까지 일정을 설정하시겠습니까?`)){
+            $.ajax({
+              type:"POST",
+              url : "../setUserTime",
+              data:{
+                start_time : sel.start,
+                end_time : sel.end,
+                sched_id : schedule.schedule_id
+              },
+              success: (res)=> {
+                alert("성공적으로 일정을 추가하였습니다.")
+                this.refetchEvents();
+                calEveryone.refetchEvents();
+              },
+              failure: function(err){
+                alert(`추가실패 error:${err}`);
+              }
+            })
+          }
+        },
         initialDate : schedule.sched_day,
+        scrollTimeReset : false,
+        scrollTime : "00:00:00",
         eventSources : [{
-          url:'../getUserTime',
+          url:'../getUserTimes',
           extraParams:{
             uid : schedule.Users[0].uid,
             sched_id : schedule.schedule_id
           },
-          failure: ()=>{console.log("Failed to fetch data")}
-        }],//`../getUserTime?uid=${schedule.User.uid}&sched_id=${schedule.schedule_id}`,
-        stickyFooterScrollbar:true,
+          failure: function(){
+              alert("Failed to fetch data");
+            }
+        }]
       });
-      const calendar2 = new FullCalendar.Calendar(calendarEl2, {
+      const calEveryone = new FullCalendar.Calendar(calEveryEl, {
         initialView: 'timeGridDay',
         allDaySlot: false,
         headerToolbar : {left:'',center:'',right:'title'},
         height : 600,
         locale : 'kr',
-        stickyFooterScrollbar:true,
+        scrollTime : "00:00:00",
+        initialDate : schedule.sched_day,
+        scrollTimeReset : false,
+        eventSources : [{
+          url:'../getEmptyTime',
+          extraParams:{
+            sched_id : schedule.schedule_id
+          },
+          failure: ()=>{alert("Failed to fetch data")}
+        }]
       });
-      calendar1.render();
-      calendar2.render();
+      calUser.render();
+      calEveryone.render();
+
+      $('#userlist').on('click', "button", e => {
+        const buttonuid = $(e.target).attr('id');
+        calUser.getEventSources().forEach(element => {
+          element.remove();
+        });
+        calUser.addEventSource({
+            url:'../getUserTimes',
+            extraParams:{
+              uid : buttonuid,
+              sched_id : schedule.schedule_id
+            },
+            failure: function(){
+              alert("Failed to fetch data")
+            },
+            success: function(res){
+              $('#calendartitle1').text(res[0].title+" 님의 시간표")
+            }
+        });
+      });
+
     });
   </script>
   
@@ -65,17 +145,17 @@
     
     <div class="d-flex flex-column flex-shrink-0 p-3 sidebar">
       
-      <a href="/" class="d-flex align-items-center mb-3 mb-md-1 me-md-auto px-2 link-dark text-decoration-none">
-        <i class="bi bi-bootstrap-fill me-2" style="font-size: 1.5rem;"></i> 
-        <span style="font-size:1.2rem;">
+      <div class="d-flex align-items-center mb-1 me-auto md-auto px-2 link-dark">
+        <i class="bi bi-bootstrap-fill me-2" style="font-size: 2rem;"></i> 
+        <span style="font-size:1.5rem;">
           Scheduler
         </span>
-      </a>
+      </div>
       <hr>
       <ul class="nav nav-pills flex-column mb-auto">
-        <a href="#" class="nav-link link-dark">
-          <i class="bi bi-usb-mini"></i>
-          일정목록
+        <a href="/user/main" class="nav-link link-dark">
+          <i class="my-auto me-2 bi bi-list-task" style="font-size: 1.2rem;"></i>
+          <span class="my-auto " style="font-size:1.1rem;"> 일정목록</span>
         </a>
       </ul>
       <hr>
@@ -104,20 +184,20 @@
       
 
       <div class="d-flex m-3">
-        <div>
+        <div id="userlist">
           <div class = "d-inline-flex flex-column p-4 mt-4 me-4 rounded shadow" style="width: max-content">
             <% for(let user of schedule.Users){ %>
-              <button type="button" class="btn btn-primary fw-semibold mb-3"> <%= user.name %> </button>
+              <button type="button" id= "<%= user.uid %>" class="userbtn btn btn-primary fw-semibold mb-3"> <%= user.name %> </button>
             <% } %>
           </div>
         </div>
         <div class="container-sm mx-4 p-3">
-          <h4 class ="text-center mb-5"><%= schedule.Users[0].name %>의 시간표</h4>
+          <h4 id = "calendartitle1" class ="text-center mb-5"><%= schedule.Users[0].name %> 님의 시간표</h4>
           <div id ="calendar1"></div>
         </div>
         <div class="vr"></div>
         <div class="container-sm mx-4 p-3">
-          <h4 class ="text-center mb-5">모두의 시간표</h4>
+          <h4 id = "calendartitle2" class ="text-center mb-5">모두의 시간표</h4>
           <div id ="calendar2"></div>
         </div>
       </div>
