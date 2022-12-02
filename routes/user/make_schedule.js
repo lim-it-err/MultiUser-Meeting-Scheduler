@@ -21,12 +21,13 @@ router.post('/', auth, async (req, res) => {
       4. 토큰이 유효하지 않으면 → 401 Unauthorized Error
       5. 해당일에 스케줄이 존재하면 → 409 Conflict Error
    */
-
+  const user = models.User.findByPk(requestUid);
   const schedule = await models.Schedule.create({
     name: scheduleName,
     sched_day: new Date(scheduleDate),
     uid: requestUid
   });
+  schedule.addUser(user);
   return res.status(201).send(
     {schedule_id: schedule.schedule_id});
 });
