@@ -80,6 +80,18 @@ router.get('/getSchedule/:uid', async (req, res) => {
   return res.status(201).send({scheduleList})
 });
 
+//For Backup Plan
+router.get('/getSchedule_byFindall/:uid', async(req, res)=>
+{
+  var requestUid = req.params.uid;
+  const scheduleList = await models.Schedule.findAll({
+    // attributes:['schedule_id', 'name', 'sched_day'],
+    where:{
+      uid:requestUid
+    }
+  });
+  return res.status(201).send({scheduleList})
+})
 
 //testing
 router.get('/usertimetest',async(req,res,next)=>{

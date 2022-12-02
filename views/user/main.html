@@ -104,70 +104,70 @@
   width: 652px;height: 500px;left: 324px;top: 84px;background: #F7FFEE;">
 
 <!--    script for init (cookie, get schedule)-->
-    <script>
-      var scheduleList_HTML = document.getElementById("scheduleList");
-      var logout_button = document.getElementById("logout-button");
-      logout_button.addEventListener("click", function(){
-        axios({
-          method : "get",
-          url:"/logout"
-        }).then(function (req){
-          //TODO : Check whether cookie has successfully deleted
-          console.log("successfully logout");
-          location.href='/login';
-        }).catch(function (req){
-          console.log("Error on logout")
-        });
-      })
-      
-      $(document).ready(function(){
-        
-        let cookie = document.cookie.split(';').reduce((cookieObject, cookieString) => {
-          let splitCookie = cookieString.split('=')
-          try {
-            cookieObject[splitCookie[0].trim()] = decodeURIComponent(splitCookie[1])
-          } catch (error) {
-            cookieObject[splitCookie[0].trim()] = splitCookie[1]
-          }
-          return cookieObject
-        }, [])
-        const userToken = cookie["token"]
-        const uid = cookie["uid"]
-        
-        var username_span = document.getElementById("username");
-        username_span.textContent = uid;
-        username_span.className = "font-weight-bold"
-        axios({
-          method: "get",
-          url:"/user/getschedule/"+uid,
-        }).then(function(req)
-        {
-          var scheduleRequest = req.data['scheduleList']; // List of Json
-          for (var i = 0 ; i < scheduleRequest.length ; i++)
-          {
-            var singleSchedule = scheduleRequest[i];
-            var singleScheduleName = singleSchedule["name"];
-            var singleScheduleDate = singleSchedule["sched_day"];
-            var btn = document.createElement("button");
-            btn.className = 'btn btn-outline-dark float-start col-12 mt-1 mb-2';
-            btn.id = singleSchedule["schedule_id"];
-            var t = document.createTextNode(singleScheduleName +"  ("+singleScheduleDate+")");
-            btn.addEventListener("click", function()
-            {
-              var url= window.location.href;
-              url = url.slice(0, url.lastIndexOf('/'))+"/schedule/sched/"+this.id;
-              location.href = url;
-            })
-            btn.appendChild(t);
-            scheduleList_HTML.append(btn);
-          }
-        }).catch(function(req)
-        {
-          console.log("error", req);
-        });
+<!--    <script>-->
+<!--      -->
+<!--      -->
+<!--      $(document).ready(function(){-->
+<!--        var scheduleList_HTML = document.getElementById("scheduleList");-->
+<!--        var logout_button = document.getElementById("logout-button");-->
+<!--        logout_button.addEventListener("click", function(){-->
+<!--          axios({-->
+<!--            method : "get",-->
+<!--            url:"/logout"-->
+<!--          }).then(function (req){-->
+<!--            //TODO : Check whether cookie has successfully deleted-->
+<!--            console.log("successfully logout");-->
+<!--            location.href='/login';-->
+<!--          }).catch(function (req){-->
+<!--            console.log("Error on logout")-->
+<!--          });-->
+<!--        })-->
+<!--        let cookie = document.cookie.split(';').reduce((cookieObject, cookieString) => {-->
+<!--          let splitCookie = cookieString.split('=')-->
+<!--          try {-->
+<!--            cookieObject[splitCookie[0].trim()] = decodeURIComponent(splitCookie[1])-->
+<!--          } catch (error) {-->
+<!--            cookieObject[splitCookie[0].trim()] = splitCookie[1]-->
+<!--          }-->
+<!--          return cookieObject-->
+<!--        }, [])-->
+<!--        const userToken = cookie["token"]-->
+<!--        const uid = cookie["uid"]-->
+<!--        -->
+<!--        var username_span = document.getElementById("username");-->
+<!--        username_span.textContent = uid;-->
+<!--        username_span.className = "font-weight-bold"-->
+<!--        axios({-->
+<!--          method: "get",-->
+<!--          url:"/user/getschedule/"+uid,-->
+<!--        }).then(function(req)-->
+<!--        {-->
+<!--          var scheduleRequest = req.data['scheduleList']; // List of Json-->
+<!--          for (var i = 0 ; i < scheduleRequest.length ; i++)-->
+<!--          {-->
+<!--            var singleSchedule = scheduleRequest[i];-->
+<!--            var singleScheduleName = singleSchedule["name"];-->
+<!--            var singleScheduleDate = singleSchedule["sched_day"];-->
+<!--            var btn = document.createElement("button");-->
+<!--            btn.className = 'btn btn-outline-dark float-start col-12 mt-1 mb-2';-->
+<!--            btn.id = singleSchedule["schedule_id"];-->
+<!--            var t = document.createTextNode(singleScheduleName +"  ("+singleScheduleDate+")");-->
+<!--            btn.addEventListener("click", function()-->
+<!--            {-->
+<!--              var url= window.location.href;-->
+<!--              url = url.slice(0, url.lastIndexOf('/'))+"/schedule/sched/"+this.id;-->
+<!--              location.href = url;-->
+<!--            })-->
+<!--            btn.appendChild(t);-->
+<!--            scheduleList_HTML.append(btn);-->
+<!--          }-->
+<!--        }).catch(function(req)-->
+<!--        {-->
+<!--          console.log("error", req);-->
+<!--        });-->
 
-      });
-      </script>
+<!--      });-->
+<!--      </script>-->
     
 
   </div>
@@ -226,28 +226,28 @@
           });
         })
       </script>
-      <script>
-        $("#logout-button").validate({
-          submitHandler: (form) => {
-            $.ajax({
-              url: "login",
-              method: "POST",
-              dataType: "json",
-              data: {
-                uid: $(form).find('#uid').val(),
-                password: $(form).find('#password').val(),
-              },
-              success: (res) => {
-                if (res.accessToken) {
-                  document.cookie = `token=${res.accessToken}`;
-                  document.cookie = `uid = ${res.uid}`;
-                  window.location.href = '/user';
-                }
-              }
-            })
-          }
-        });
-      </script>
+<!--      <script>-->
+<!--        $("#logout-button").validate({-->
+<!--          submitHandler: (form) => {-->
+<!--            $.ajax({-->
+<!--              url: "login",-->
+<!--              method: "POST",-->
+<!--              dataType: "json",-->
+<!--              data: {-->
+<!--                uid: $(form).find('#uid').val(),-->
+<!--                password: $(form).find('#password').val(),-->
+<!--              },-->
+<!--              success: (res) => {-->
+<!--                if (res.accessToken) {-->
+<!--                  document.cookie = `token=${res.accessToken}`;-->
+<!--                  document.cookie = `uid = ${res.uid}`;-->
+<!--                  window.location.href = '/user';-->
+<!--                }-->
+<!--              }-->
+<!--            })-->
+<!--          }-->
+<!--        });-->
+<!--      </script>-->
     </div>
 
   </div>
@@ -290,6 +290,7 @@
       }).then(function(req)
       {
         var scheduleRequest = req.data['scheduleList']; // List of Json
+        console.log(scheduleRequest);
         for (var i = 0 ; i < scheduleRequest.length ; i++)
         {
           var singleSchedule = scheduleRequest[i];
@@ -304,7 +305,7 @@
           btn.addEventListener("click", function()
           {
             var url= window.location.href;
-            url = url.slice(0, url.lastIndexOf('/'))+"/schedule"+"?id="+this.id;
+            url = url.slice(0, url.lastIndexOf('/'))+"/schedule/sched/"+this.id;
             location.href = url;
           })
           btn.appendChild(t1);
@@ -328,9 +329,6 @@
       var url= window.location.href;
       url = url.slice(0, url.lastIndexOf('/'))+"/make_schedule";
       location.href = url;    
-    })
-    add.addEventListener("click", function(){
-      console.log("?");
     })
   </script>
 
