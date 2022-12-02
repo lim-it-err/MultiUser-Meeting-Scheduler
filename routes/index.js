@@ -41,7 +41,8 @@ router.post('/login', async (req, res) => {
 
       res.status(200).send({
           uid: user.uid,
-          accessToken: token
+          accessToken: token,
+        name:user.name
         }
       );
     }
