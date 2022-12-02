@@ -28,13 +28,16 @@ router.get('/make_schedule', auth, (req,res,next)=>{
 router.post('/joinSchedule', auth, async (req, res) => {
   let requestScheduleId = req.body.schedule_id;
   let requestUid = req.body.uid;
+  const existingUser = await models.User.findByPk(requestUid);
   const existingSchedule = await models.Schedule.findByPk(requestScheduleId);
   if (!existingSchedule) return res.status(404).send({description: "no schedules are found"})
   const newSchedule = await models.Schedule.create({
     name: existingSchedule.name,
     sched_day: existingSchedule.sched_day,
     uid: requestUid
-  })
+  });
+  newSchedule.addUser(existingUser);
+
   /* TODO:
       1. If schedule Not exists -> 404 Error (Done)
    */
@@ -65,6 +68,22 @@ router.get('/detail', auth, async(req, res)=>{
 // https://www.notion.so/scheudle-userid-fc61ec47299c4e33a0697aee0f8f514b
 router.get('/getSchedule/:uid', async (req, res) => {
   var requestUid = req.params.uid;
+  const user = await models.User.findOne({
+    // attributes:['schedule_id', 'name', 'sched_day'],
+    where:{
+      uid:requestUid
+    },
+    include:models.Schedule
+  });
+  console.log(user.Schedules);
+  const scheduleList = user.Schedules;
+  return res.status(201).send({scheduleList})
+});
+
+//For Backup Plan
+router.get('/getSchedule_byFindall/:uid', async(req, res)=>
+{
+  var requestUid = req.params.uid;
   const scheduleList = await models.Schedule.findAll({
     // attributes:['schedule_id', 'name', 'sched_day'],
     where:{
@@ -72,12 +91,11 @@ router.get('/getSchedule/:uid', async (req, res) => {
     }
   });
   return res.status(201).send({scheduleList})
-});
-
+})
 
 //testing
 router.get('/usertimetest',async(req,res,next)=>{
-  const usertime = await models.UserTime.findAll({
+  const usertime = await models.Users.findAll({
     where: {
       uid: "test"
     },
