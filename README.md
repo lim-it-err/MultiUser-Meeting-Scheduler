@@ -14,30 +14,12 @@ Try our web to reach arrangement of available time!
 
 ## Requirement
 ```
-- MySQL
+- MySQL database
 - Node
 ```
 
-## Usage
 
-```
-$ git clone https://github.com/lim-it-ing/MultiUser-Meeting-Scheduler.git
-```
-
-Go into the project directory and run the command:
-
-### localhost
-```
-$ nodemon index.js
-or
-$ node index.js
-```
-
-Open `http://localhost:PORT` and enjoy!
-
-## API
-
-## Before Run
+## How to use
 Add this in `config/database.js`
 
 ```jsx
@@ -85,7 +67,34 @@ module.exports = {
 ```jsx
 SECRET_KEY = yoursecretkey
 JWT_SECRET = yourjwtsecret
+PORT = portnum
 ```
+
+Finally,
+```
+- npm install
+- npm start
+```
+
+## Example
+
+![Sample App Image](./img/login.png)
+우선 로그인하거나 회원가입을 통해 계정을 생성합니다
+
+
+![Sample App Image](./img/mainpage.png)
+현재 참여중인 일정의 목록이 보입니다   
+우측의 참가/생성 버튼을 눌러 전달받은 일정id를 통해 참가하거나 일정을 생성할 수 있습니다.
+
+![Sample App Image](./img/make_sched.png)
+일정 생성페이지에서 일정을 생성합니다
+
+![Sample App Image](./img/banner.png)
+내가 참여중인 일정에 들어가면    
+다음과 같이 좌측의 버튼을 통해 해당유저의 시간을 좌측 시간표에서 확인할 수 있으며   
+우측에서 모든 참가자가 일정이 비는 시간을 바로 확인 할 수 있습니다
+
+
 ## Database Structure
 ### User
 
@@ -130,3 +139,5 @@ Linked Table Between User - Schedule
 
 Link : https://navy-sting-049.notion.site/APIs-7aa8d40df52b42b4baf65dcd07bd4f2e
 
+## Youtube link
+https://youtu.be/ReUuH3mMbYc
