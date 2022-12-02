@@ -31,16 +31,13 @@
     <div class="card" style="width: 200px; height: 60px; background: #CBFFB6;
     border-radius: 100px;">
       <div class="card-body">
-        <i class="bi bi-check-circle-fill"></i> 일정 <span class="badge bg-dark"> +100</span>
+        <i class="bi bi-check-circle-fill"></i> 일정 
+<!--        <span class="badge bg-dark"> +100</span>-->
       </div>
     </div>
 
-
-
-
-
-    <div class="p-2 "> <button type="button" class="btn btn-light" style="width: 182px;
-      height: 40px;"> <i class="bi bi-person-square"></i> &nbsp;&nbsp;마이페이지</button>
+<!--    <div class="p-2 "> <button type="button" class="btn btn-light" style="width: 182px;-->
+<!--      height: 40px;"> <i class="bi bi-person-square"></i> &nbsp;&nbsp;마이페이지</button>-->
     </div>
 
 
@@ -52,18 +49,18 @@
 
 
     <div class="input-group input-group-lg">
-      <input type="text" class="form-control" aria-label="Sizing example input" placeholder="일정 이름 입력"
+      <input id = "schedule-name" type="text" class="form-control" aria-label="Sizing example input" placeholder="일정 이름 입력"
         aria-describedby="inputGroup-sizing-lg">
     </div>
     <p></p>
 
     <div class="input-group">
-      <input type="text" class="form-control" aria-label="Sizing example input" placeholder="user id"
+      <input id = "user-id" type="text" class="form-control" aria-label="Sizing example input" placeholder="user id"
         aria-describedby="inputGroup-sizing-lg">
     </div>
 
     <div class="input-group mt-auto p-2">
-      <input type="text" class="form-control" aria-label="Sizing example input" placeholder="비밀키 입력"
+      <input id = "today-date" type="text" class="form-control" aria-label="Sizing example input" placeholder="2022-08-31"
         aria-describedby="inputGroup-sizing-lg">
     </div>
 
@@ -74,12 +71,12 @@
 
     <h1><i class="bi bi-person-circle"></i></h1>&nbsp;&nbsp;
     <div>
-      <strong>사용자이름</strong>
+      <strong id="username">사용자이름</strong>
       <p>
 
       </p>
       <p>
-        사용자id
+        안녕하세요
       </p>
     </div>
     <div class="justify-content-end">
@@ -129,11 +126,83 @@
 
 
 
-  <button type="button" class="btn btn-lg btn-primary"
+  <button type="button" class="btn btn-lg btn-primary" id="create-schedule"
     style="position: absolute; width: 140px;height: 50px;left: 1212px;top: 520px;">일정생성</button>
 
   <script>
-    /* JS Code */
+    var createSchedulebtn = document.getElementById("create-schedule")
+    let cookie = document.cookie.split(';').reduce((cookieObject, cookieString) => {
+      let splitCookie = cookieString.split('=')
+      try {
+        cookieObject[splitCookie[0].trim()] = decodeURIComponent(splitCookie[1])
+      } catch (error) {
+        cookieObject[splitCookie[0].trim()] = splitCookie[1]
+      }
+      return cookieObject
+    }, [])
+    const userToken = cookie["token"]
+    const userid = cookie["uid"]
+    var username_span = document.getElementById("username");
+    username_span.textContent = userid;
+    username_span.className = "font-weight-bold"
+    
+    createSchedulebtn.onclick = function() {
+      const schedule_name = document.getElementById("schedule-name").value,
+        currentUserid = userid;
+      let todayDate;
+      let otherUserid;
+      try {
+        otherUserid = document.getElementById("user-id").value
+      }
+      catch(e)
+      {
+        otherUserid = null;
+      }
+      try{
+        todayDate = document.getElementById("today-date").value
+      }
+      catch(e){
+        //FIXME : Change it to todayDate
+        todayDate = "2022-12-02";
+      }
+        axios({
+        method: "post",
+        url: "/user/make_schedule",
+        data: {
+          name: document.getElementById("schedule-name").value,
+          uid: currentUserid,
+          date: Date(todayDate)
+
+        }
+      }).then(function (req) {
+        //TODO : Check whether cookie has successfully deleted
+        location.href = "/user"
+
+      }).catch(function (req) {
+        console.log("Error on logout")
+      });
+      
+      if (otherUserid!== null)
+      {
+        axios({
+          method: "post",
+          url: "/user/make_schedule",
+          data: {
+            name: document.getElementById("schedule-name").value,
+            uid: otherUserid,
+            date: Date(todayDate)
+
+          }   }).then(function (req) {
+          //TODO : Check whether cookie has successfully deleted
+          location.href = "/user"
+
+        }).catch(function (req) {
+          console.log("Error on logout")
+        });
+      }
+    }
+    
+    
   </script>
 </body>
 
