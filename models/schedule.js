@@ -4,7 +4,7 @@ module.exports = (sequelize, DataTypes) => {
   class Schedule extends Model {
     static associate(models) {
       this.belongsToMany(models.User,{
-        foreignKey: "schedule_id",
+        foreignKey: "uid",
         through: "UserSchedule",
       });
       this.hasMany(models.UserTime,{
