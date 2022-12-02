@@ -25,25 +25,26 @@ router.get('/make_schedule', auth, (req,res,next)=>{
 //main page 요청들
 
 // https://www.notion.so/schedule-join-a533e2354142498ca61d733844f8ec1a
-router.post('/joinSchedule', auth, async (req, res) => {
-  let requestScheduleId = req.body.schedule_id;
-  let requestUid = req.body.uid;
-  const existingUser = await models.User.findByPk(requestUid);
-  const existingSchedule = await models.Schedule.findByPk(requestScheduleId);
-  if (!existingSchedule) return res.status(404).send({description: "no schedules are found"})
-  const newSchedule = await models.Schedule.create({
-    name: existingSchedule.name,
-    sched_day: existingSchedule.sched_day,
-    uid: requestUid
-  });
-  newSchedule.addUser(existingUser);
-
-  /* TODO:
-      1. If schedule Not exists -> 404 Error (Done)
-   */
-  return res.status(201).send(
-    {schedule_id: newSchedule.schedule_id});
-});
+// router.post('/joinSchedule', auth, async (req, res) => {
+//   let requestScheduleId = req.body.schedule_id;
+//   let requestUid = req.body.uid;
+//   const existingUser = await models.User.findByPk(requestUid);
+//   const existingSchedule = await models.Schedule.findByPk(requestScheduleId);
+//   if (!existingSchedule) return res.status(404).send({description: "no schedules are found"})
+//   const newSchedule = await models.Schedule.create({
+//     name: existingSchedule.name,
+//     sched_day: existingSchedule.sched_day,
+//     uid: requestUid,
+//     schedule_id : requestScheduleId
+//   });
+//   newSchedule.addUser(existingUser);
+//
+//   /* TODO:
+//       1. If schedule Not exists -> 404 Error (Done)
+//    */
+//   return res.status(201).send(
+//     {schedule_id: newSchedule.schedule_id});
+// });
 
 router.get('/detail', auth, async(req, res)=>{
   const token = req.cookies.token;
