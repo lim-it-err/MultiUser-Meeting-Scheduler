@@ -10,10 +10,10 @@ router.get('/', auth, (req,res,next)=>{
 //---------------------------
 // https://www.notion.so/schedule-6d68794e9ab64020932994ffbca6b118
 router.post('/', auth, async (req, res) => {
-  let requestUid = req.body.uid;
+  let new_uid = req.body.uid;
   const scheduleName = req.body.name;
   const scheduleDate = req.body.date;   //Format : yyyy-mm-dd
-
+  console.log("maketest",scheduleName, scheduleDate);
   /* TODO: 
       1. Request Uid가 존재하지 않을 경우 -> 404 Not Found {body}
       2. Request가 하나라도 Null일 경우 → 404 Not Found {body}
@@ -21,15 +21,28 @@ router.post('/', auth, async (req, res) => {
       4. 토큰이 유효하지 않으면 → 401 Unauthorized Error
       5. 해당일에 스케줄이 존재하면 → 409 Conflict Error
    */
-  const user = models.User.findByPk(requestUid);
+  let new_user = 0;
+  if(new_uid){
+    new_user = await models.User.findByPk(new_uid);
+    if(!new_user)
+      return res.status(400).send({result:false});
+  }
+  const cur_user = await models.User.findByPk(req.uid);
+  if(!cur_user)
+    return res.status(400).send({result:false});
+  
   const schedule = await models.Schedule.create({
     name: scheduleName,
-    sched_day: new Date(scheduleDate),
-    uid: requestUid
+    sched_day: new Date(scheduleDate)
   });
-  schedule.addUser(user);
+  if(new_uid){
+    schedule.addUser(new_user);
+  }
+  schedule.addUser(cur_user);
+  console.log("makeres",new_user,cur_user,schedule);
   return res.status(201).send(
-    {schedule_id: schedule.schedule_id});
+      {schedule_id: schedule.schedule_id, result:true});
+  
 });
 
 module.exports = router;

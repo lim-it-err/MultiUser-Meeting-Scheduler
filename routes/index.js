@@ -15,6 +15,10 @@ router.get('/login', (req, res) => {
   res.render("login.html");
 });
 
+router.get('/signup', (req, res) => {
+  res.render("signup.html");
+});
+
 router.post('/login', async (req, res) => {
   const responseUid = req.body.uid;
   const user = await models.User.findOne({where: {uid: responseUid}});
@@ -28,7 +32,7 @@ router.post('/login', async (req, res) => {
     else {
       const TOKEN_KEY = process.env.JWT_SECRET || "";
       const token = jwt.sign(
-        {uid: responseUid},
+        {uid: user.uid, name:user.name},
         TOKEN_KEY,
         {
           expiresIn: "1d",
@@ -37,6 +41,7 @@ router.post('/login', async (req, res) => {
 
       res.status(200).send({
           uid: user.uid,
+          name: user.name,
           accessToken: token
         }
       );
@@ -46,7 +51,8 @@ router.post('/login', async (req, res) => {
 
 router.get('/logout', auth, async(req,res) =>{
   res.clearCookie("token");
-  res.clearCookie("uid")
+  res.clearCookie("uid");
+  res.clearCookie("name");
   res.redirect("/login");
 })
 

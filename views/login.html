@@ -29,7 +29,7 @@
     </li>
 
     <li class="nav-item">
-      <a class="nav-link text-dark" href="#">회원가입</a>
+      <a class="nav-link text-dark" href="/signup">회원가입</a>
     </li>
     </strong>
 
@@ -71,6 +71,7 @@
             if (res.accessToken) {
               document.cookie = `token=${res.accessToken}`;
               document.cookie = `uid = ${res.uid}`;
+              document.cookie = `name = ${res.name}`;
               window.location.href = '/user';
             }
           }
