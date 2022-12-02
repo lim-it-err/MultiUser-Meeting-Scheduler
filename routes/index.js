@@ -15,6 +15,10 @@ router.get('/login', (req, res) => {
   res.render("login.html");
 });
 
+router.get('/signup', (req, res)=>{
+  res.render("signup.html");
+})
+
 router.post('/login', async (req, res) => {
   const responseUid = req.body.uid;
   const user = await models.User.findOne({where: {uid: responseUid}});
