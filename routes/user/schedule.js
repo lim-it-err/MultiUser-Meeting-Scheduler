@@ -78,6 +78,10 @@ router.get("/getEmptyTime", async(req,res,next)=>{
     order : [['start_time','ASC']]
   });
   let time_arr = [];
+  if (user_times.length ===0){
+    res.send(time_arr);
+    return;
+  }
   let endmoments_arr = [ moment(user_times[0].start_time).set({'hour':0, 'minute':0,'second':0}) ];
   let i , emptycnt=1;
   for(i=0;i<user_times.length;i++){
