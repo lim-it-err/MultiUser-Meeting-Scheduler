@@ -31,18 +31,13 @@ router.post('/joinSchedule', auth, async (req, res) => {
   const existingUser = await models.User.findByPk(requestUid);
   const existingSchedule = await models.Schedule.findByPk(requestScheduleId);
   if (!existingSchedule) return res.status(404).send({description: "no schedules are found"})
-  const newSchedule = await models.Schedule.create({
-    name: existingSchedule.name,
-    sched_day: existingSchedule.sched_day,
-    uid: requestUid
-  });
-  newSchedule.addUser(existingUser);
+  existingSchedule.addUser(existingUser);
 
   /* TODO:
       1. If schedule Not exists -> 404 Error (Done)
    */
   return res.status(201).send(
-    {schedule_id: newSchedule.schedule_id});
+    {schedule_id: existingSchedule.schedule_id});
 });
 
 router.get('/detail', auth, async(req, res)=>{

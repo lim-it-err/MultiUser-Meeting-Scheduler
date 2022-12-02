@@ -59,17 +59,24 @@ router.get('/getUserTimes', async(req,res,next)=>{
       where: { uid : req.query.uid, schedule_id: req.query.sched_id },
       include : {model: models.User, attributes:["name"]}
   });
+  const user = await models.User.findOne({
+    where: { uid : req.query.uid}
+  })
   //console.log(user_times);
   let time_arr = [];
-  user_times.forEach(usertime=>{
-    let time = {};
-    time.resourceId = usertime.uid;
-    time.start = usertime.start_time;
-    time.end = usertime.end_time;
-    time.title = usertime.User.name;
-    time_arr.push(time);
-  })
-  return res.send(time_arr);
+  if(user_times.length > 0) {
+    user_times.forEach(usertime=>{
+      let time = {};
+      time.resourceId = usertime.uid;
+      time.start = usertime.start_time;
+      time.end = usertime.end_time;
+      time.title = usertime.User.name;
+      time_arr.push(time);
+    })
+  } else {
+    time_arr = [{title:user.name}];
+  }
+  return res.status(201).send(time_arr);
 })
 
 router.get("/getEmptyTime", async(req,res,next)=>{
@@ -78,28 +85,31 @@ router.get("/getEmptyTime", async(req,res,next)=>{
     order : [['start_time','ASC']]
   });
   let time_arr = [];
-  let endmoments_arr = [ moment(user_times[0].start_time).set({'hour':0, 'minute':0,'second':0}) ];
-  let i , emptycnt=1;
-  for(i=0;i<user_times.length;i++){
-    let startmoment = moment(user_times[i].start_time);
-    //console.log(`start moment ${startmoment}`);
-    //console.log(`prev end moment ${endmoments_arr[i]}`);
-    //console.log(`diff ${startmoment.diff(endmoments_arr[i],'minutes',true)}`);
-    endmoments_arr[i+1] = moment(user_times[i].end_time);
-    if(startmoment.diff(endmoments_arr[i],'minutes',true) >= 30){
-      let time = {};
-      time.title = `빈시간 ${emptycnt++}`;
-      time.start = endmoments_arr[i];
-      time.end = startmoment;
-      time_arr.push(time);
+  if(user_times.length>0){
+    let endmoments_arr = [ moment(user_times[0].start_time).set({'hour':0, 'minute':0,'second':0}) ];
+    let i , emptycnt=1;
+    for(i=0;i<user_times.length;i++){
+      let startmoment = moment(user_times[i].start_time);
+      //console.log(`start moment ${startmoment}`);
+      //console.log(`prev end moment ${endmoments_arr[i]}`);
+      //console.log(`diff ${startmoment.diff(endmoments_arr[i],'minutes',true)}`);
+      endmoments_arr[i+1] = moment(user_times[i].end_time);
+      if(startmoment.diff(endmoments_arr[i],'minutes',true) >= 30){
+        let time = {};
+        time.title = `빈시간 ${emptycnt++}`;
+        time.start = endmoments_arr[i];
+        time.end = startmoment;
+        time_arr.push(time);
+      }
+    };
+    let finaltime = {
+      title : `빈시간 ${emptycnt++}`,
+      start : endmoments_arr[i],
+      end : moment(user_times[0].start_time).set({'hour':24, 'minute':0,'second':0})
     }
-  };
-  let finaltime = {
-    title : `빈시간 ${emptycnt++}`,
-    start : endmoments_arr[i],
-    end : moment(user_times[0].start_time).set({'hour':24, 'minute':0,'second':0})
+    time_arr.push(finaltime);
   }
-  time_arr.push(finaltime);
+
   //console.log(`final time : `+JSON.stringify(time_arr));
   res.send(time_arr);
 })

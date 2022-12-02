@@ -71,6 +71,7 @@
             if (res.accessToken) {
               document.cookie = `token=${res.accessToken}`;
               document.cookie = `uid = ${res.uid}`;
+              document.cookie = `name = ${res.name}`;
               window.location.href = '/user';
             }
           }
