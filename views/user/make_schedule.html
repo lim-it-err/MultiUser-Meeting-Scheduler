@@ -175,6 +175,26 @@
 
         }
       }).then(function (req) {
+        let retScheduleId = req.schedule_id
+        if (otherUserid!== '')
+        {
+          axios({
+            method: "post",
+            url: "/user/make_schedule",
+            data: {
+              name: document.getElementById("schedule-name").value,
+              uid: otherUserid,
+              date: Date(todayDate)
+            }   
+          })
+            .then(function (req) {
+            //TODO : Check whether cookie has successfully deleted
+            location.href = "/user"
+
+          }).catch(function (req) {
+            console.log("Error on logout")
+          });
+        }
         //TODO : Check whether cookie has successfully deleted
         location.href = "/user"
 
@@ -182,24 +202,7 @@
         console.log("Error on logout")
       });
       
-      if (otherUserid!== '')
-      {
-        axios({
-          method: "post",
-          url: "/user/make_schedule",
-          data: {
-            name: document.getElementById("schedule-name").value,
-            uid: otherUserid,
-            date: Date(todayDate)
-
-          }   }).then(function (req) {
-          //TODO : Check whether cookie has successfully deleted
-          location.href = "/user"
-
-        }).catch(function (req) {
-          console.log("Error on logout")
-        });
-      }
+      
     }
     
     

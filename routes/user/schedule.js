@@ -5,10 +5,14 @@ const auth = require('../auth');
 const moment = require("moment");
 
 router.get('/sched/:sched_id', auth, async(req,res,next)=>{
-  const schedule = await models.Schedule.findOne({
+  const find_name = await models.Schedule.findOne({
     where: {schedule_id: req.params.sched_id },
+    include:models.User  });
+  const schedule = await models.Schedule.findOne({
+    where: {name: find_name.name},
     include:models.User
   });
+  console.log(find_name);
   //console.log(JSON.stringify(schedule));
   if (!schedule)  return res.status(404).send({description:"no schedules are found."});
   if(schedule.Users.length){

@@ -26,8 +26,20 @@
   <script src="/fullcalendar/main.js"></script>
   <script>
     let schedule = <%- JSON.stringify(schedule) %>;
-    let current_uid = schedule.Users[0].uid;
+    // let current_uid = schedule.Users[0].uid;
     //console.log(schedule.Users.length);
+    let cookie = document.cookie.split(';').reduce((cookieObject, cookieString) => {
+      let splitCookie = cookieString.split('=')
+      try {
+        cookieObject[splitCookie[0].trim()] = decodeURIComponent(splitCookie[1])
+      } catch (error) {
+        cookieObject[splitCookie[0].trim()] = splitCookie[1]
+      }
+      return cookieObject
+    }, [])
+    const userToken = cookie["token"]
+    const current_uid = cookie["uid"]
+    
     $(document).ready(($)=>{
       const calUserEl = $('#calendar1')[0];
       const calEveryEl = $('#calendar2')[0];
@@ -88,7 +100,7 @@
         eventSources : [{
           url:'../getUserTimes',
           extraParams:{
-            uid : schedule.Users[0].uid,
+            uid : current_uid,
             sched_id : schedule.schedule_id
           },
           failure: function(){

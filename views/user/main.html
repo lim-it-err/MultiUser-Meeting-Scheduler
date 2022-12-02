@@ -90,7 +90,7 @@
   <div class="modal-content">
     <span class="close">&times;</span>
     <div class="input-group">
-      <input type="text" class="form-control" id="join-schedule-id" aria-label="Sizing example input" placeholder="ID"
+      <input type="text" class="form-control" id="join-name" aria-label="Sizing example input" placeholder="ID"
              aria-describedby="inputGroup-sizing-lg">
       <button type="button" id="finish-enter-button" class="btn btn-primary">입력 완료</button>
     </div>
@@ -203,27 +203,28 @@
   </script>
 
   <script>
-    var add = document.getElementById("schedule-add");
-    var create = document.getElementById("schedule-create");
-    
-    create.addEventListener("click", function(){
-      var url= window.location.href;
-      url = url.slice(0, url.lastIndexOf('/'))+"/make_schedule";
-      location.href = url;    
-    })
-  </script>
+    let add, create;
+    $(document).ready(function() {
 
-  <script>
-    // Get the modal
-    var modal = document.getElementById("myModal");
+      add = document.getElementById("schedule-add");
+      create = document.getElementById("schedule-create");
+      create.addEventListener("click", function(){
+        var url= window.location.href;
+        url = url.slice(0, url.lastIndexOf('/'))+"/make_schedule";
+        location.href = url;
+      })
+      // Get the modal
+      var modal = document.getElementById("myModal");
 
-    // Get the button that opens the modal
-    var btn = document.getElementById("schedule-add");
+      // Get the button that opens the modal
+      var btn = document.getElementById("schedule-add");
 
-    // Get the <span> element that closes the modal
-    var span = document.getElementsByClassName("close")[0];
+      // Get the <span> element that closes the modal
+      var span = document.getElementsByClassName("close")[0];
 
-    var finEnterBtn = document.getElementById("finish-enter-button");
+      var finEnterBtn = document.getElementById("finish-enter-button");
+ 
+
     // When the user clicks the button, open the modal 
     btn.onclick = function() {
       modal.style.display = "block";
@@ -247,11 +248,14 @@
       const userid = cookie["uid"]
       axios({
         method : "post",
-        url:"/user/joinSchedule",
+        url:"/user/make_schedule",
         data:{
-          schedule_id : document.getElementById("join-schedule-id").value,
-          uid: userid
+          name : document.getElementById("join-name").value,
+          uid: userid,
+          // date : document.getElementById("join-date").value
+          date : "2022-12-02"
         }
+        
       }).then(function (req){
         //TODO : Check whether cookie has successfully deleted
         document.location.reload();
@@ -260,7 +264,7 @@
         console.log("Error on logout")
       });
       modal.style.display="none";
-    }
+    }   });
 
   </script>
   
